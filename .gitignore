@@ -1,2 +1,50 @@
-# Specify filepatterns you want git to ignore.
-# Nothing so far
+#Reference folder
+reference*/
+
+#Files for documation purpose
+*.doc
+*.docx
+*.xls
+*.xlsx
+*.pdf
+
+#Compiled Binaries
+*.bin
+*.elf
+*.hex
+*.map
+
+#Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+#Executables
+*.exe
+*.out
+*.app
+
+#Ignore folders and files used by IAR
+**/settings/directory/
+**/Firmware/app/*.html
+*.ewt
+*.ewd
+*.eww
+
+#IAR Settings
+**/settings/*.crun
+**/settings/*.dbgdt
+**/settings/*.cspy
+**/settings/*.cspy.*
+**/settings/*.xcl
+**/settings/*.dni
+**/settings/*.wsdt
+**/settings/*.wspos
+
+#IAR Debug Obj  
+**/Obj/*.pbd  
+**/Obj/*.pbd.*  
+**/Obj/*.pbi  
+**/Obj/*.pbi.* 
+
