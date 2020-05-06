@@ -17,6 +17,7 @@
 #define INC_AS5132_H_
 
 #include <stdint.h>
+#include "stm32f3xx_hal.h"
 
 #define AS5132_CMD_WRITE_CFG      0x17U
 #define AS5132_CMD_WRITE_MT_CNT   0x14U
@@ -41,6 +42,7 @@ typedef struct {
   uint8_t mtc1;
   uint8_t mtc2;
   uint16_t mt_counter;
+  uint8_t cmd_byte;
   uint8_t data_write[2];
 } AS5132_W_DATA_T;
 
@@ -50,32 +52,33 @@ typedef struct {
   uint8_t angle;
   uint8_t lock_adc;
   uint8_t agc;
-  uint8_t parity_rd_mt_counter;
-  uint8_t parity_rd_angle;
+  uint8_t cmd_byte;
   uint8_t data_read[2];
 } AS5132_R_DATA_T;
 
 typedef struct{
+  GPIO_TypeDef *cs_port;
+  uint16_t cs_pin;
+  SPI_HandleTypeDef *hspi;
   AS5132_W_DATA_T ssi_write;
   AS5132_R_DATA_T ssi_read;
 } AS5132_SSI_HANDLE_T;
 
 typedef enum{
-  
+  AS5132_PARITY_RD_MT_COUNTER,
+  AS5132_PARITY_RD_ANGLE
 } AS5132_PARITY_ENUM;
 
+
 /**
- * @brief      This function check the parity bit in read data;
+ * @brief      This function provide a SSI write procedure;
  */
-static rslt_t AS5132_SSI_CheckParity(const AS5132_SSI_HANDLE_T *p_h, const AS5132_PARITY_ENUM parity_select);
+static rslt_t AS5132_SSI_Write(AS5132_SSI_HANDLE_T *p_h);
 /**
- * @brief      This function provide a SSI write precedure;
+ * @brief      This function provide a SSI read procedure;
  */
-static rslt_t AS5132_SSI_Write(AS5132_SSI_HANDLE_T *p_h,);
-/**
- * @brief      This function provide a SSI read precedure;
- */
-static rslt_t AS5132_SSI_Read(const AS5132_SSI_HANDLE_T *p_h,);
+static rslt_t AS5132_SSI_Read(AS5132_SSI_HANDLE_T *p_h);
+rslt_t AS5132_SSI_ObjInit(AS5132_SSI_HANDLE_T *p_h, GPIO_TypeDef *cs_port, uint16_t cs_pin, SPI_HandleTypeDef *hspi);
 /**
  * @brief      This function set "WRITE CONFIG";
  */
@@ -107,11 +110,11 @@ rslt_t AS5132_SSI_GetLockADC(const AS5132_SSI_HANDLE_T *p_h, uint8_t *p_out);
 rslt_t AS5132_SSI_GetAGC(const AS5132_SSI_HANDLE_T *p_h, uint8_t *p_out);
 
 /**
- * @brief      This function provide a SSI write precedure for command "WRITE CONFIG";
+ * @brief      This function provide a SSI write procedure for command "WRITE CONFIG";
  */
 rslt_t AS5132_SSI_WriteConfig(AS5132_SSI_HANDLE_T *p_h);
 /**
- * @brief      This function provide a SSI write precedure for command "SET MT COUNTER";
+ * @brief      This function provide a SSI write procedure for command "SET MT COUNTER";
  */
 rslt_t AS5132_SSI_WriteMTCounter(AS5132_SSI_HANDLE_T *p_h);
 /**
@@ -129,11 +132,11 @@ rslt_t AS5132_SSI_SetandWriteConfig(AS5132_SSI_HANDLE_T *p_h,
  */
 rslt_t AS5132_SSI_SetandWriteMTCounter(AS5132_SSI_HANDLE_T *p_h, const uint16_t mt_counter);
 /**
- * @brief      This function provide a SSI read precedure for command "RD MT COUNTER";
+ * @brief      This function provide a SSI read procedure for command "RD MT COUNTER";
  */
 rslt_t AS5132_SSI_ReadMTCounter(AS5132_SSI_HANDLE_T *p_h);
 /**
- * @brief      This function provide a SSI read precedure for command "RD_ANGLE";
+ * @brief      This function provide a SSI read procedure for command "RD_ANGLE";
  */
 rslt_t AS5132_SSI_ReadAngle(AS5132_SSI_HANDLE_T *p_h);
 
