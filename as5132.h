@@ -49,7 +49,7 @@ typedef struct {
 typedef struct {
   uint16_t mt_counter;
   uint8_t ez_err;
-  uint8_t angle;
+  uint16_t angle;
   uint8_t lock_adc;
   uint8_t agc;
   uint8_t cmd_byte;
@@ -78,6 +78,7 @@ static rslt_t AS5132_SSI_Write(AS5132_SSI_HANDLE_T *p_h);
  * @brief      This function provide a SSI read procedure;
  */
 static rslt_t AS5132_SSI_Read(AS5132_SSI_HANDLE_T *p_h);
+
 rslt_t AS5132_SSI_ObjInit(AS5132_SSI_HANDLE_T *p_h, GPIO_TypeDef *cs_port, uint16_t cs_pin, SPI_HandleTypeDef *hspi);
 /**
  * @brief      This function set "WRITE CONFIG";
