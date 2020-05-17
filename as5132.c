@@ -40,22 +40,23 @@ static rslt_t AS5132_SSI_Read(AS5132_SSI_HANDLE_T *p_h){
     /*Set CS to Low*/
     HAL_GPIO_WritePin(p_h->cs_port, p_h->cs_pin, GPIO_PIN_RESET);
     //hal_resault = HAL_SPI_TransmitReceiveSSI(p_h->hspi, &(p_h->ssi_read.cmd_byte), p_h->ssi_read.data_read);
-    hal_resault = HAL_SPI_TXRXSSI(p_h->hspi, &(p_h->ssi_read.cmd_byte), p_h->ssi_read.data_read);
+    //hal_resault = HAL_SPI_TXRXSSI(p_h->hspi, &(p_h->ssi_read.cmd_byte), p_h->ssi_read.data_read);
 
 
-    //hal_resault = HAL_SPI_Transmit(p_h->hspi, &(p_h->ssi_read.cmd_byte), 1, 1);
-    //if(hal_resault == HAL_OK){
-      //hal_resault = HAL_SPI_Receive(p_h->hspi, p_h->ssi_read.data_read, 2, 1);
+    hal_resault = HAL_SPI_Transmit(p_h->hspi, &(p_h->ssi_read.cmd_byte), 1, 1);
+    if(hal_resault == HAL_OK){
+      __HAL_SPI_DISABLE(p_h->hspi);
+      hal_resault = HAL_SPI_Receive(p_h->hspi, p_h->ssi_read.data_read, 2, 1);
       if(hal_resault == HAL_OK){
         resault = AS5132_RSLT_OK;
       }
       else{
         resault = AS5132_RSLT_TMO;
       }
-    //}
-    //else{
-    //  resault = AS5132_RSLT_TMO;
-    //}
+    }
+    else{
+      resault = AS5132_RSLT_TMO;
+    }
     /*Set CS to High*/
     HAL_GPIO_WritePin(p_h->cs_port, p_h->cs_pin, GPIO_PIN_SET);
   }
