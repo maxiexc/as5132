@@ -1,12 +1,20 @@
 #include "as5132.h"
 #include <string.h>
 
+uint16_t as5132_temp_u16_1;
+uint8_t as5132_temp_u8_1;
+
 static uint8_t AS5132_SSI_CheckODDParity(uint16_t data_to_test){
+  as5132_temp_u16_1 = 0;
+  as5132_temp_u16_1 = data_to_test;
   data_to_test ^= data_to_test >> 8U;
   data_to_test ^= data_to_test >> 4U;
   data_to_test ^= data_to_test >> 2U;
   data_to_test ^= data_to_test >> 1U;
-  return (uint8_t)(~data_to_test & 0x1U);
+  as5132_temp_u8_1 = 0;
+  as5132_temp_u8_1 = (uint8_t)(~data_to_test & 0x1U);
+  //return (uint8_t)(~data_to_test & 0x1U);
+  return as5132_temp_u8_1;
 }
 
 static rslt_t AS5132_SSI_Write(AS5132_SSI_HANDLE_T *p_h){
@@ -15,7 +23,7 @@ static rslt_t AS5132_SSI_Write(AS5132_SSI_HANDLE_T *p_h){
     /*Proceed*/
     /*Set CS to Low*/
     HAL_GPIO_WritePin(p_h->cs_port, p_h->cs_pin, GPIO_PIN_RESET);
-    if(HAL_SPI_Transmit(p_h->hspi, &(p_h->ssi_write.cmd_byte), 1, 0) == HAL_OK){
+    if(HAL_SPI_Transmit(p_h->hspi, &(p_h->ssi_write.cmd_byte), 1, 2) == HAL_OK){
       if(HAL_SPI_Transmit(p_h->hspi, p_h->ssi_write.data_write, 2, 2) == HAL_OK){
         resault = AS5132_RSLT_OK;
       }
@@ -40,23 +48,23 @@ static rslt_t AS5132_SSI_Read(AS5132_SSI_HANDLE_T *p_h){
     /*Set CS to Low*/
     HAL_GPIO_WritePin(p_h->cs_port, p_h->cs_pin, GPIO_PIN_RESET);
     //hal_resault = HAL_SPI_TransmitReceiveSSI(p_h->hspi, &(p_h->ssi_read.cmd_byte), p_h->ssi_read.data_read);
-    //hal_resault = HAL_SPI_TXRXSSI(p_h->hspi, &(p_h->ssi_read.cmd_byte), p_h->ssi_read.data_read);
+    hal_resault = HAL_SPI_TXRXSSI(p_h->hspi, &(p_h->ssi_read.cmd_byte), p_h->ssi_read.data_read);
 
 
-    hal_resault = HAL_SPI_Transmit(p_h->hspi, &(p_h->ssi_read.cmd_byte), 1, 1);
-    if(hal_resault == HAL_OK){
-      __HAL_SPI_DISABLE(p_h->hspi);
-      hal_resault = HAL_SPI_Receive(p_h->hspi, p_h->ssi_read.data_read, 2, 1);
+    //hal_resault = HAL_SPI_Transmit(p_h->hspi, &(p_h->ssi_read.cmd_byte), 1, 2);
+    //if(hal_resault == HAL_OK){
+    //  __HAL_SPI_DISABLE(p_h->hspi);
+    //  hal_resault = HAL_SPI_Receive(p_h->hspi, p_h->ssi_read.data_read, 2, 2);
       if(hal_resault == HAL_OK){
         resault = AS5132_RSLT_OK;
       }
       else{
         resault = AS5132_RSLT_TMO;
       }
-    }
-    else{
-      resault = AS5132_RSLT_TMO;
-    }
+    //}
+    //else{
+    //  resault = AS5132_RSLT_TMO;
+    //}
     /*Set CS to High*/
     HAL_GPIO_WritePin(p_h->cs_port, p_h->cs_pin, GPIO_PIN_SET);
   }
@@ -115,11 +123,50 @@ rslt_t AS5132_SSI_SetMTCounter(AS5132_SSI_HANDLE_T *p_h, const uint16_t mt_count
   return resault;
 }
 
-rslt_t AS5132_SSI_GetLockADC(const AS5132_SSI_HANDLE_T *p_h, uint8_t *p_out){
+rslt_t AS5132_SSI_GetMTCounter(const AS5132_SSI_HANDLE_T *p_h, uint16_t *p_out){
+  rslt_t resault = AS5132_RSLT_SNA;
+  if(p_h != NULL){
+    /*Valid pointer*/
+    *p_out = p_h->ssi_read.mt_counter;
+    resault = AS5132_RSLT_OK;
+  }
+  else{
+    resault = AS5132_RSLT_BAD_POINTER;
+  }
+  return resault;
+}
+
+rslt_t AS5132_SSI_GetEZErr(const AS5132_SSI_HANDLE_T *p_h, uint8_t *p_out){
+  rslt_t resault = AS5132_RSLT_SNA;
+  if(p_h != NULL){
+    /*Valid pointer*/
+    *p_out = p_h->ssi_read.ez_err;
+    resault = AS5132_RSLT_OK;
+  }
+  else{
+    resault = AS5132_RSLT_BAD_POINTER;
+  }
+  return resault;
+}
+
+rslt_t AS5132_SSI_GetAngle(const AS5132_SSI_HANDLE_T *p_h, uint16_t *p_out){
   rslt_t resault = AS5132_RSLT_SNA;
   if(p_h != NULL){
     /*Valid pointer*/
     *p_out = p_h->ssi_read.angle;
+    resault = AS5132_RSLT_OK;
+  }
+  else{
+    resault = AS5132_RSLT_BAD_POINTER;
+  }
+  return resault;
+}
+
+rslt_t AS5132_SSI_GetLockADC(const AS5132_SSI_HANDLE_T *p_h, uint8_t *p_out){
+  rslt_t resault = AS5132_RSLT_SNA;
+  if(p_h != NULL){
+    /*Valid pointer*/
+    *p_out = p_h->ssi_read.lock_adc;
     resault = AS5132_RSLT_OK;
   }
   else{
@@ -240,6 +287,11 @@ rslt_t AS5132_SSI_ReadMTCounter(AS5132_SSI_HANDLE_T *p_h){
         p_h->ssi_read.mt_counter = ((uint16_t)p_h->ssi_read.data_read[0] << 1U) | (uint16_t)((p_h->ssi_read.data_read[1] >> 7U) & 0x1U);
         p_h->ssi_read.ez_err = ((p_h->ssi_read.data_read[1] >> 6U) & 0x1U);
       }
+      else{
+        resault = 0x11; /*Debug*/      }
+    }
+    else{
+      resault = 0x12;
     }
   }
   else{

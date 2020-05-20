@@ -27,7 +27,7 @@
 
 #define AS5132_RSLT_OK            0x00U
 #define AS5132_RSLT_PASS          0x00U
-#define AS5132_RSLT_NPASS         0x01U
+#define AS5132_RSLT_NPASS         0x10U
 #define AS5132_RSLT_BAD_POINTER   0x01U
 #define AS5132_RSLT_TMO           0x02U
 #define AS5132_RSLT_OTHER_ERR     0xFEU
@@ -73,11 +73,11 @@ typedef enum{
 /**
  * @brief      This function provide a SSI write procedure;
  */
-static rslt_t AS5132_SSI_Write(AS5132_SSI_HANDLE_T *p_h);
+//static rslt_t AS5132_SSI_Write(AS5132_SSI_HANDLE_T *p_h);
 /**
  * @brief      This function provide a SSI read procedure;
  */
-static rslt_t AS5132_SSI_Read(AS5132_SSI_HANDLE_T *p_h);
+//static rslt_t AS5132_SSI_Read(AS5132_SSI_HANDLE_T *p_h);
 
 rslt_t AS5132_SSI_ObjInit(AS5132_SSI_HANDLE_T *p_h, GPIO_TypeDef *cs_port, uint16_t cs_pin, SPI_HandleTypeDef *hspi);
 /**
@@ -94,13 +94,17 @@ rslt_t AS5132_SSI_SetConfig(AS5132_SSI_HANDLE_T *p_h,
  */
 rslt_t AS5132_SSI_SetMTCounter(AS5132_SSI_HANDLE_T *p_h, const uint16_t mt_counter);
 /**
- * @brief      This function get "ANGLE" by writing into the pointer p_out;
- */
-rslt_t AS5132_SSI_GetAngle(const AS5132_SSI_HANDLE_T *p_h, uint16_t *p_out);
-/**
  * @brief      This function get "MT-COUNTER" by writing into the pointer p_out;
  */
 rslt_t AS5132_SSI_GetMTCounter(const AS5132_SSI_HANDLE_T *p_h, uint16_t *p_out);
+/**
+ * @brief      This function get "EZERR" by writing into the pointer p_out;
+ */
+rslt_t AS5132_SSI_GetEZErr(const AS5132_SSI_HANDLE_T *p_h, uint8_t *p_out);
+/**
+ * @brief      This function get "ANGLE" by writing into the pointer p_out;
+ */
+rslt_t AS5132_SSI_GetAngle(const AS5132_SSI_HANDLE_T *p_h, uint16_t *p_out);
 /**
  * @brief      This function get "LOCK ADC" by writing into the pointer p_out;
  */
