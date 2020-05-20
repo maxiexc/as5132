@@ -1,20 +1,20 @@
 #include "as5132.h"
 #include <string.h>
 
-uint16_t as5132_temp_u16_1;
-uint8_t as5132_temp_u8_1;
+//uint16_t as5132_temp_u16_1;
+//uint8_t as5132_temp_u8_1;
 
 static uint8_t AS5132_SSI_CheckODDParity(uint16_t data_to_test){
-  as5132_temp_u16_1 = 0;
-  as5132_temp_u16_1 = data_to_test;
+  //as5132_temp_u16_1 = 0;
+  //as5132_temp_u16_1 = data_to_test;
   data_to_test ^= data_to_test >> 8U;
   data_to_test ^= data_to_test >> 4U;
   data_to_test ^= data_to_test >> 2U;
   data_to_test ^= data_to_test >> 1U;
-  as5132_temp_u8_1 = 0;
-  as5132_temp_u8_1 = (uint8_t)(~data_to_test & 0x1U);
-  //return (uint8_t)(~data_to_test & 0x1U);
-  return as5132_temp_u8_1;
+  // as5132_temp_u8_1 = 0;
+  //as5132_temp_u8_1 = (uint8_t)(~data_to_test & 0x1U);
+  return (uint8_t)(~data_to_test & 0x1U);
+  //return as5132_temp_u8_1;
 }
 
 static rslt_t AS5132_SSI_Write(AS5132_SSI_HANDLE_T *p_h){
